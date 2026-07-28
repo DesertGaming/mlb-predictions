@@ -29,7 +29,7 @@ CREATE TABLE schedule (
     game_date      DATE NOT NULL,
     home_team_id   SMALLINT NOT NULL REFERENCES teams(team_id),
     away_team_id   SMALLINT NOT NULL REFERENCES teams(team_id),
-    game_status    VARCHAR(10) NOT NULL DEFAULT 'scheduled', -- Identifies if a game has already happened
+    game_status    VARCHAR(20) NOT NULL DEFAULT 'scheduled', -- Identifies if a game has already happened
     home_runs      SMALLINT, -- NULL until game is finished
     away_runs      SMALLINT,
     CHECK(home_team_id <> away_team_id)
