@@ -1,7 +1,7 @@
 # Schedule Fetching and Upserting Core
 
 import requests
-from src.db.connection import get_connection
+
 
 
 def fetch_and_upsert(cur, start_date, end_date):
