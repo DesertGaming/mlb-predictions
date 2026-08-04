@@ -8,11 +8,11 @@ SELECT t.team_id,
 FROM teams t
 LEFT JOIN (
     SELECT home_team_id AS team_id, COUNT(*) as games_played, SUM(home_runs) as runs_scored, SUM(away_runs) as runs_allowed FROM schedule
-    WHERE game_date <= %s AND game_date >= %s AND game_status = 'Final'
+    WHERE game_date <= %s AND game_date >= %s AND game_status IN ('Final', 'Completed Early')
     GROUP BY team_id
     UNION ALL
     SELECT away_team_id AS team_id, COUNT(*) as games_played, SUM(away_runs) as runs_scored, SUM(home_runs) as runs_allowed FROM schedule
-    WHERE game_date <= %s AND game_date >= %s AND game_status = 'Final'
+    WHERE game_date <= %s AND game_date >= %s AND game_status IN ('Final', 'Completed Early')
     GROUP BY team_id
 ) AS r ON r.team_id = t.team_id
 LEFT JOIN preseason_estimates p ON p.team_id = t.team_id AND p.season = %s

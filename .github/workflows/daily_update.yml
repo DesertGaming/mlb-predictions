@@ -1,0 +1,33 @@
+name: Daily Update
+
+# Runs at 14:00 UTC, which is 7am Pacific during Daylight Saving Time.
+on:
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:  # allows manually triggering a run from the Actions tab, useful for testing
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch schedule updates
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.data_pipeline.daily_fetch
+
+      - name: Calculate daily team strength
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.data_pipeline.daily_strength
