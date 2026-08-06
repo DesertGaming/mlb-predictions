@@ -70,12 +70,11 @@ CREATE TABLE model_config (
 -- Simulation Batch Metadata --
 
 CREATE TABLE simulation_batches (
-    batch_id       BIGINT PRIMARY KEY, -- Surroggate key
+    batch_id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- Surroggate key
     as_of_date     DATE NOT NULL,
     season         SMALLINT NOT NULL,
     n_simulations  INT NOT NULL, -- Number of sims in the batch
-    created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(as_of_date, season) -- One canonical batch per date; Test batches have a new batch_id
+    created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 

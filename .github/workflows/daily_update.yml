@@ -31,3 +31,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python -m src.data_pipeline.daily_strength
+
+      - name: Run daily simulation
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.simulation.daily_simulation
