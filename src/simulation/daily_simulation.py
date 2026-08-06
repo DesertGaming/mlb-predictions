@@ -10,9 +10,7 @@ n = 15000
 
 with get_connection() as conn:
     with conn.cursor() as cur:
-        start = time.time()
         sim(cur, today, n)
-        end = time.time()
     conn.commit()
 
 conn.close()
