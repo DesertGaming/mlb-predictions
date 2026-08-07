@@ -1,3 +1,5 @@
+-- Originally used for linear backtest. Moderately edited to support sim-based backtest as well. provides cumulative game, run, and win totals per team season.
+
 WITH cg AS (
     SELECT
         game_id, 
@@ -38,7 +40,8 @@ SELECT
     COUNT(*) OVER(PARTITION BY cg.team_id, cg.season) - COUNT(*) OVER(PARTITION BY cg.team_id, cg.season ORDER BY cg.game_date, cg.game_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS games_remaining,
     SUM(cg.win) OVER(PARTITION BY cg.team_id, cg.season ORDER BY cg.game_date, cg.game_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS wins_so_far,
     SUM(cg.win) OVER(PARTITION BY cg.team_id, cg.season) AS final_wins,
-    p.preseason_strength
+    p.preseason_strength,
+    cg.game_date
 FROM cg
 LEFT JOIN preseason_estimates AS p
     ON p.team_id = cg.team_id AND p.season = cg.season

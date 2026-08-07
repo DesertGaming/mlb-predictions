@@ -20,7 +20,7 @@ def sim(cur, as_of_date, n_simulations):
                     SELECT team_id, SUM(win) as wins_so_far
                     FROM games
                     GROUP BY team_id;"""
-    schedule_query = "SELECT home_team_id, away_team_id FROM schedule WHERE game_date > %s AND EXTRACT(YEAR FROM game_date) = %s AND game_status NOT IN ('Final', 'Completed Early', 'Cancelled');"
+    schedule_query = "SELECT home_team_id, away_team_id FROM schedule WHERE game_date > %s AND EXTRACT(YEAR FROM game_date) = %s;"
 
     cur.execute(params_query)
     k, hfa_beta, prob_floor, prob_ceiling = cur.fetchone()
