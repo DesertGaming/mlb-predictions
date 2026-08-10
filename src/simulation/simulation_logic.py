@@ -8,7 +8,9 @@ from psycopg2.extras import execute_values
 def sim(cur, as_of_date, n_simulations):
     params_query = "SELECT k_constant, hfa_constant, prob_floor, prob_ceiling FROM model_config ORDER BY as_of_date DESC LIMIT 1;"
     strength_query = "SELECT team_id, weighted_strength FROM daily_team_strength WHERE as_of_date = %s;"
-    wins_query = """WITH games AS (
+    wins_query = """SELECT t.team_id, COALESCE(SUM(g.win), 0) AS wins_so_far
+                    FROM teams t
+                    LEFT JOIN (
                         SELECT home_team_id AS team_id, CASE WHEN home_runs > away_runs THEN 1 ELSE 0 END AS win
                         FROM schedule
                         WHERE game_date <= %s AND EXTRACT(YEAR FROM game_date) = %s AND game_status IN ('Final', 'Completed Early')
@@ -16,10 +18,8 @@ def sim(cur, as_of_date, n_simulations):
                         SELECT away_team_id AS team_id, CASE WHEN away_runs > home_runs THEN 1 ELSE 0 END AS win
                         FROM schedule
                         WHERE game_date <= %s AND EXTRACT(YEAR FROM game_date) = %s AND game_status IN ('Final', 'Completed Early')
-                        )
-                    SELECT team_id, SUM(win) as wins_so_far
-                    FROM games
-                    GROUP BY team_id;"""
+                    ) AS g ON g.team_id = t.team_id
+                    GROUP BY t.team_id;"""
     schedule_query = "SELECT home_team_id, away_team_id FROM schedule WHERE game_date > %s AND EXTRACT(YEAR FROM game_date) = %s;"
 
     cur.execute(params_query)
