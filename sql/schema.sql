@@ -6,7 +6,7 @@
 CREATE TABLE teams (
     team_id      SMALLINT PRIMARY KEY,  -- teams numbered 1-30
     team_abbr    VARCHAR(5) NOT NULL UNIQUE, -- official 3 letter abbreviations e.g. "NYY"
-    team_name    VARCHAR(50) NOT NULL, -- full team name e.g. "Yankees"
+    team_name    VARCHAR(50) NOT NULL, -- full team name e.g. "New York Yankees"
     league       VARCHAR(2) NOT NULL, -- 'AL'/'NL'
     division     VARCHAR(10) NOT NULL -- 'AL East', 'NL West', etc.
 );
@@ -90,3 +90,9 @@ CREATE TABLE daily_win_distribution (
 );
 
 CREATE INDEX idx_win_dist_team ON daily_win_distribution(team_id, batch_id);
+
+CREATE INDEX idx_simulation_batches_season_date_created 
+    ON simulation_batches(season, as_of_date, created_at DESC);
+
+CREATE INDEX idx_win_dist_batch 
+    ON daily_win_distribution(batch_id);

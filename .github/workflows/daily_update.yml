@@ -1,10 +1,13 @@
 name: Daily Update
 
-# Runs at 14:00 UTC, which is 7am Pacific during Daylight Saving Time.
+# Runs at 10:00 UTC, which is 3am Pacific during Daylight Saving Time.
 on:
   schedule:
-    - cron: '0 14 * * *'
+    - cron: '0 10 * * *'
   workflow_dispatch:  # allows manually triggering a run from the Actions tab, useful for testing
+
+permissions:
+  contents: write  # allows this workflow to commit and push back to the repo
 
 jobs:
   update:
@@ -36,3 +39,16 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python -m src.simulation.daily_simulation
+
+      - name: Export data for Tableau
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m src.exports.daily_export
+
+      - name: Commit and push updated exports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add exports/
+          git commit -m "Update daily exports" || echo "No changes to commit"
+          git push
